@@ -43,6 +43,8 @@ public class SnippetMojo extends AbstractGistMojo {
     				getLog().debug("Generating snippet for " + file.getGistFileName() + " and snippetId " + file.getSnippetId());
     				processFile(file.getLocation(), file.getSnippetId(), gistOutputDirectory);	
     			}
+    			
+    			gistCount++;
     		}
     	} catch ( IOException e ) {
             throw new MojoExecutionException( "Error executing snippet creation mojo", e );
@@ -55,11 +57,11 @@ public class SnippetMojo extends AbstractGistMojo {
 		return gistOutputDirectory;
     }
     
-    private void processFile(File inputFile, String outputFileName, File outputDirectory) throws IOException {
+    private void processFile(File inputFile, String snippetId, File outputDirectory) throws IOException {
        	URL url = FileUtils.toURLs(new File[]{inputFile})[0];
         SnippetReader snippetReader = new SnippetReader(url);
-        File file = new File( outputDirectory, outputFileName);
-        FileUtils.fileWrite(file, snippetReader.readSnippet("snip-id").toString());
+        File file = new File( outputDirectory, snippetId);
+        FileUtils.fileWrite(file, snippetReader.readSnippet(snippetId).toString());
     }
 
 }
