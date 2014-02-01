@@ -66,6 +66,11 @@ JSP
             </configuration>
         </plugin>
 
+### Plugin execution
+
+    mvn org.vromero:gist-maven-plugin:gist
+    mvn org.vromero:gist-maven-plugin:upload
+
 ## Maintainers
 * [Victor Romero](http://www.vromero.org)
 
