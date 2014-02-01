@@ -38,6 +38,9 @@ public abstract class AbstractGistMojo extends AbstractMojo {
     
     @Parameter(property = "password")
     private String password;
+
+    @Parameter(property = "encoding", defaultValue = "${project.build.sourceEncoding}")
+    private String encoding;
     
 	public File getOutputDirectory() {
 		return outputDirectory;
@@ -69,6 +72,13 @@ public abstract class AbstractGistMojo extends AbstractMojo {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}    
-	
+	}
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
 }

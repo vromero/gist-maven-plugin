@@ -36,20 +36,21 @@ public class GistUploader {
 
 	private static DescriptionCorrelationStrategy descriptionCorrelator = new DescriptionCorrelationStrategy();
 	
-	public static void uploadGist(GitHubClient client, org.vromero.gist.mojo.Gist upload, String user, List<Gist> userGists, File gistOutputDirectory) throws IOException {
-    	Gist gist = createGist(upload, gistOutputDirectory);
+	public static void uploadGist(GitHubClient client, org.vromero.gist.mojo.Gist upload,
+                          List<Gist> userGists, File gistOutputDirectory, String encoding) throws IOException {
+        Gist gist = createGist(upload, gistOutputDirectory, encoding);
 		
-		Gist correlatedGist = correlate(upload.getCorrelationStrategy(), userGists, client, gist);
+		Gist correlatedGist = correlate(upload.getCorrelationStrategy(), userGists, gist);
 		
 		if (correlatedGist != null && GistContentComparator.isUpdateNeeded(gist, correlatedGist)) {
 			gist.setId(correlatedGist.getId());
-			gist = new GistService(client).updateGist(gist);
+			new GistService(client).updateGist(gist);
 		} else {
-			gist = new GistService(client).createGist(gist);
+			new GistService(client).createGist(gist);
 		}
     }
 
-	private static Gist createGist(org.vromero.gist.mojo.Gist upload, File gistOutputDirectory) throws IOException {
+	private static Gist createGist(org.vromero.gist.mojo.Gist upload, File gistOutputDirectory, String encoding) throws IOException {
 		Map<String, String> files = new HashMap<String, String>(upload.getFiles().size());
 		
 		Map<String,GistFile> gistFiles = new HashMap<String,GistFile>(files.size());
@@ -57,7 +58,7 @@ public class GistUploader {
 			File snippetFileDescriptor = new File(gistOutputDirectory, file.getSnippetId());
 			
 			GistFile gistFile = new GistFile()
-				.setContent(FileUtils.fileRead(snippetFileDescriptor))
+				.setContent(FileUtils.fileRead(snippetFileDescriptor, encoding))
 				.setFilename(file.getGistFileName());
 			
 			gistFiles.put(file.getGistFileName(), gistFile);
@@ -71,7 +72,7 @@ public class GistUploader {
 		return gist;
 	}
 	
-	private static Gist correlate(org.vromero.gist.mojo.Gist.CorrelationStrategy strategy, List<Gist> userGists, GitHubClient client, Gist gist)
+	private static Gist correlate(org.vromero.gist.mojo.Gist.CorrelationStrategy strategy, List<Gist> userGists, Gist gist)
 			throws IOException {
 		if(strategy == org.vromero.gist.mojo.Gist.CorrelationStrategy.DESCRIPTION) {
 			return descriptionCorrelator.correlate(userGists, gist);

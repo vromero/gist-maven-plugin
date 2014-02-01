@@ -59,9 +59,9 @@ public class SnippetMojo extends AbstractGistMojo {
     
     private void processFile(File inputFile, String snippetId, File outputDirectory) throws IOException {
        	URL url = FileUtils.toURLs(new File[]{inputFile})[0];
-        SnippetReader snippetReader = new SnippetReader(url);
+        SnippetReader snippetReader = new SnippetReader(url, getEncoding());
         File file = new File( outputDirectory, snippetId);
-        FileUtils.fileWrite(file, snippetReader.readSnippet(snippetId).toString());
+        FileUtils.fileWrite(file, getEncoding(), snippetReader.readSnippet(snippetId).toString());
     }
 
 }

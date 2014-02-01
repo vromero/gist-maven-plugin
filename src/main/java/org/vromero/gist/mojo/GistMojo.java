@@ -48,7 +48,7 @@ public class GistMojo extends AbstractGistMojo {
     			File gistOutputDirectory = new File(getOutputDirectory(), "gist-" + String.valueOf(gistCount));
     			
     			getLog().debug("Processing gist with description " + gist.getDescription());
-    			GistUploader.uploadGist(client, gist, getUsername(), userGists, gistOutputDirectory);
+    			GistUploader.uploadGist(client, gist, userGists, gistOutputDirectory, getEncoding());
     			
     			gistCount++;
     		}
