@@ -30,6 +30,10 @@ import java.util.Locale;
 import org.codehaus.plexus.util.IOUtil;
 
 /**
+ * This file was borrowed from the Doxia Maven Plugin: http://svn.apache.org/viewvc/maven/doxia/doxia/tags/doxia-1.5/doxia-core/src/main/java/org/apache/maven/doxia/macro/snippet/SnippetReader.java?view=log
+ */
+
+/**
  * Utility class for reading snippets.
  *
  * @version $Id: SnippetReader.java 1544338 2013-11-21 21:59:01Z michaelo $
