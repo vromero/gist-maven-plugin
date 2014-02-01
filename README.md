@@ -12,32 +12,38 @@ The gist-maven-plugin follows intentionally the same snippet demarcation convent
 
 Java
 
+```java
     // START SNIPPET: snip-id
     public static void main( String[] args ) {
         System.out.println( "Hello World!" );
     }
     // END SNIPPET: snip-id
+```
+
 XML
 
-    <!-- START SNIPPET: snip-id -->
-    <navigation-rule>
-        <from-view-id>/logon.jsp</from-view-id>
-        <navigation-case>
-              <from-outcome>success</from-outcome>
-              <to-view-id>/mainMenu.jsp</to-view-id>
-        </navigation-case>
-    </navigation-rule>
-    <!-- END SNIPPET: snip-id -->
+```xml
+<!-- START SNIPPET: snip-id -->
+<navigation-rule>
+    <from-view-id>/logon.jsp</from-view-id>
+    <navigation-case>
+          <from-outcome>success</from-outcome>
+          <to-view-id>/mainMenu.jsp</to-view-id>
+    </navigation-case>
+</navigation-rule>
+<!-- END SNIPPET: snip-id -->
+```
 
 JSP
 
-    <%-- START SNIPPET: snip-id --%>
-    <ul>
-        <li><a href="newPerson!input.action">Create</a> a new person</li>
-        <li><a href="listPeople.action">List</a> all people</li>
-    </ul>
-    <%-- END SNIPPET: snip-id --%>
-
+```xml
+<%-- START SNIPPET: snip-id --%>
+<ul>
+    <li><a href="newPerson!input.action">Create</a> a new person</li>
+    <li><a href="listPeople.action">List</a> all people</li>
+</ul>
+<%-- END SNIPPET: snip-id --%>
+```
 
 ## Plugin Configuration
 
