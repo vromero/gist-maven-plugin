@@ -9,29 +9,46 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NoneGistCorrelationStrategyTest {
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-    private NoneGistCorrelationStrategy strategy;
+public class DescriptionGistCorrelationStrategyTest {
+
+    private DescriptionGistCorrelationStrategy strategy;
 
     @Before
     public void setUp() {
-        strategy = new NoneGistCorrelationStrategy();
+        strategy = new DescriptionGistCorrelationStrategy();
     }
 
     @Test
-    public void testNulldOnEmptyList() {
+    public void testNullOnEmptyList() {
         Assert.assertNull(strategy.correlate(new Gist(), new ArrayList<Gist>()));
     }
 
     @Test
-    public void testNullValidCorrelation() {
+    public void testGistOnValidCorrelation() {
         Gist candidate = new Gist();
         candidate.setDescription("valid description");
 
-        List<Gist> userGists = new ArrayList<Gist>();
-        userGists.add(candidate);
+        Gist element1 = new Gist();
+        element1.setId("element1");
+        element1.setDescription("different description");
 
-        Assert.assertNull(strategy.correlate(candidate, userGists));
+        Gist element2 = new Gist();
+        element2.setId("element2");
+        element2.setDescription("valid description");
+
+        List<Gist> userGists = new ArrayList<Gist>();
+        userGists.add(element1);
+        userGists.add(element2);
+
+        Gist correlated = strategy.correlate(candidate, userGists);
+
+        Assert.assertNotNull(correlated);
+        assertThat(correlated, instanceOf(Gist.class));
+        assertThat(correlated.getId(), is(element2.getId()));
     }
 
     @Test(expected = IllegalArgumentException.class)

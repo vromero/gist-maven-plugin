@@ -39,6 +39,13 @@ public class DescriptionGistCorrelationStrategy implements GistCorrelationStrate
      */
 	@Override
     public Gist correlate(Gist gist, List<Gist> userGists) {
+
+        if (gist == null) {
+            throw new IllegalArgumentException("gist cannot be null");
+        } else if (userGists == null) {
+            throw new IllegalArgumentException("user gists cannot be null");
+        }
+
         checkForDescriptionUniqueness(userGists);
         for (Gist candidate : userGists) {
 			if (candidate.getDescription().equals(gist.getDescription())) {

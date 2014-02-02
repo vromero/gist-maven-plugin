@@ -37,6 +37,12 @@ public class NoneGistCorrelationStrategy implements GistCorrelationStrategy {
      * @return null
      */
 	public Gist correlate(Gist gist, List<Gist> userGists) {
+        if (gist == null) {
+            throw new IllegalArgumentException("gist cannot be null");
+        } else if (userGists == null) {
+            throw new IllegalArgumentException("user gists cannot be null");
+        }
+
 		return null;
 	}
 	
