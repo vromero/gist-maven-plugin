@@ -19,16 +19,17 @@ package org.vromero.gist.uploader.correlationstrategy;
  * under the License.
  */
 
-import java.util.List;
-
+import org.apache.maven.plugin.MojoExecutionException;
 import org.eclipse.egit.github.core.Gist;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Strategy to correlate using the description field of the gists.
  */
 public class DescriptionGistCorrelationStrategy implements GistCorrelationStrategy {
-
-    // TODO: check for uniqueness
 
     /**
      * Correlate against the userGists the given gist using the description field
@@ -38,6 +39,7 @@ public class DescriptionGistCorrelationStrategy implements GistCorrelationStrate
      */
 	@Override
     public Gist correlate(Gist gist, List<Gist> userGists) {
+        checkForDescriptionUniqueness(userGists);
         for (Gist candidate : userGists) {
 			if (candidate.getDescription().equals(gist.getDescription())) {
 				return candidate;
@@ -46,5 +48,16 @@ public class DescriptionGistCorrelationStrategy implements GistCorrelationStrate
 		
 		return null;
 	}
+
+    private void checkForDescriptionUniqueness(List<Gist> userGists) {
+        Set<String> descriptionSet = new HashSet<String>(userGists.size());
+        for (Gist gist : userGists) {
+            boolean inserted = descriptionSet.add(gist.getDescription());
+            if (!inserted) {
+                throw new IllegalStateException
+                        ("Description correlation cannot be use with users that have duplicated descriptions");
+            }
+        }
+    }
 	
 }
