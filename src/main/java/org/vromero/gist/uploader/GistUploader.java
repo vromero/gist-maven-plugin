@@ -39,6 +39,8 @@ public class GistUploader {
 
     private GistService service;
 
+    List<Gist> userGists;
+
     public GistUploader(String username, String password, Log log) {
         this.log = log;
         this.username = username;
@@ -47,13 +49,7 @@ public class GistUploader {
     }
 
     public void uploadGist(Gist gist, GistCorrelationStrategy correlationStrategy) throws IOException {
-        log.debug("Obtaining existing gists");
-
-        // TODO: Cache
-        List<Gist> userGists = getGists();
-
-		Gist correlatedGist = correlationStrategy.correlate(gist, userGists);
-
+		Gist correlatedGist = correlationStrategy.correlate(gist, getGists());
         GistContentComparator comparator = new GistContentComparator(log);
 
 		if (correlatedGist != null) {
@@ -72,14 +68,19 @@ public class GistUploader {
     }
 
     private List<Gist> getGists() throws IOException {
-        List<Gist> incompleteGists = service.getGists(username);
-        List<Gist> completeGists = new ArrayList<Gist>(incompleteGists.size());
-
-        for (Gist gist : incompleteGists) {
-            completeGists.add(service.getGist(gist.getId()));
+        if(userGists != null) {
+            return userGists;
         }
 
-        return completeGists;
+        log.debug("Obtaining existing gists");
+        List<Gist> incompleteGists = service.getGists(username);
+        List<Gist> userGists = new ArrayList<Gist>(incompleteGists.size());
+
+        for (Gist gist : incompleteGists) {
+            userGists.add(service.getGist(gist.getId()));
+        }
+        this.userGists = userGists;
+        return userGists;
     }
 
     private GistService buildService(String username, String password) {
