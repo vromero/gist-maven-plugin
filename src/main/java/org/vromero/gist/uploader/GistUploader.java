@@ -19,65 +19,74 @@ package org.vromero.gist.uploader;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.maven.plugin.logging.Log;
 import org.eclipse.egit.github.core.Gist;
-import org.eclipse.egit.github.core.GistFile;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.GistService;
-import org.vromero.gist.mojo.SnippetFile;
+import org.vromero.gist.uploader.correlationstrategy.GistCorrelationStrategy;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GistUploader {
 
-	private static DescriptionCorrelationStrategy descriptionCorrelator = new DescriptionCorrelationStrategy();
-	
-	public static void uploadGist(GitHubClient client, org.vromero.gist.mojo.Gist upload,
-                          List<Gist> userGists, File gistOutputDirectory, String encoding) throws IOException {
-        Gist gist = createGist(upload, gistOutputDirectory, encoding);
-		
-		Gist correlatedGist = correlate(upload.getCorrelationStrategy(), userGists, gist);
-		
-		if (correlatedGist != null && GistContentComparator.isUpdateNeeded(gist, correlatedGist)) {
-			gist.setId(correlatedGist.getId());
-			new GistService(client).updateGist(gist);
-		} else {
-			new GistService(client).createGist(gist);
-		}
+    private Log log;
+
+    private String username;
+
+    private String password;
+
+    private GistService service;
+
+    public GistUploader(String username, String password, Log log) {
+        this.log = log;
+        this.username = username;
+        this.password = password;
+        this.service = buildService(username, password);
     }
 
-	private static Gist createGist(org.vromero.gist.mojo.Gist upload, File gistOutputDirectory, String encoding) throws IOException {
-		Map<String, String> files = new HashMap<String, String>(upload.getFiles().size());
-		
-		Map<String,GistFile> gistFiles = new HashMap<String,GistFile>(files.size());
-		for (SnippetFile file : upload.getFiles()) {
-			File snippetFileDescriptor = new File(gistOutputDirectory, file.getSnippetId());
-			
-			GistFile gistFile = new GistFile()
-				.setContent(FileUtils.fileRead(snippetFileDescriptor, encoding))
-				.setFilename(file.getGistFileName());
-			
-			gistFiles.put(file.getGistFileName(), gistFile);
+    public void uploadGist(Gist gist, GistCorrelationStrategy correlationStrategy) throws IOException {
+        log.debug("Obtaining existing gists");
+
+        // TODO: Cache
+        List<Gist> userGists = getGists();
+
+		Gist correlatedGist = correlationStrategy.correlate(gist, userGists);
+
+        GistContentComparator comparator = new GistContentComparator(log);
+
+		if (correlatedGist != null) {
+            if (comparator.isUpdateNeeded(gist, correlatedGist)) {
+                log.debug("Updating existent gist");
+                gist.setId(correlatedGist.getId());
+                service.updateGist(gist);
+            } else {
+                log.debug("No update required");
+            }
+		} else {
+            log.debug("Creating new gist");
+            service.createGist(gist);
 		}
-    	
-    	Gist gist = new Gist().setDescription(upload.getDescription());
-    	
-    	gist.setPublic(upload.isPublic());
-		gist.setFiles(gistFiles);
-		
-		return gist;
-	}
-	
-	private static Gist correlate(org.vromero.gist.mojo.Gist.CorrelationStrategy strategy, List<Gist> userGists, Gist gist)
-			throws IOException {
-		if(strategy == org.vromero.gist.mojo.Gist.CorrelationStrategy.DESCRIPTION) {
-			return descriptionCorrelator.correlate(userGists, gist);
-		}
-		return gist;
-	}
-	
+
+    }
+
+    private List<Gist> getGists() throws IOException {
+        List<Gist> incompleteGists = service.getGists(username);
+        List<Gist> completeGists = new ArrayList<Gist>(incompleteGists.size());
+
+        for (Gist gist : incompleteGists) {
+            completeGists.add(service.getGist(gist.getId()));
+        }
+
+        return completeGists;
+    }
+
+    private GistService buildService(String username, String password) {
+        log.debug("Creating gist service with username " + username);
+        GitHubClient client = new GitHubClient().setCredentials(username, password);
+        service = new GistService(client);
+        return service;
+    }
+
 }

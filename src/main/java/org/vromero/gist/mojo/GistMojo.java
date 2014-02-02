@@ -19,16 +19,17 @@ package org.vromero.gist.mojo;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.eclipse.egit.github.core.client.GitHubClient;
-import org.eclipse.egit.github.core.service.GistService;
+import org.eclipse.egit.github.core.GistFile;
+import org.vromero.gist.snippet.SnippetManager;
 import org.vromero.gist.uploader.GistUploader;
+import org.vromero.gist.uploader.correlationstrategy.GistCorrelationStrategy;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Mojo( name = "upload", defaultPhase = LifecyclePhase.SITE_DEPLOY, requiresOnline = true, requiresProject = true)
 public class GistMojo extends AbstractGistMojo {
@@ -38,17 +39,18 @@ public class GistMojo extends AbstractGistMojo {
     	try {
     		int gistCount = 0;
 
-    		getLog().debug("Connecting to GitHub with username " + getUsername());
-        	GitHubClient client = new GitHubClient().setCredentials(getUsername(), getPassword());
-        	
-        	getLog().debug("Obtaining existing gists");
-        	List<org.eclipse.egit.github.core.Gist> userGists = new GistService(client).getGists(getUsername());
-        	
+            GistUploader uploader = new GistUploader(getUsername(), getPassword(), getLog());
+            SnippetManager snippetManager = new SnippetManager(getEncoding(), getOutputDirectory());
+
     		for (Gist gist : getGists()) {
-    			File gistOutputDirectory = new File(getOutputDirectory(), "gist-" + String.valueOf(gistCount));
-    			
-    			getLog().debug("Processing gist with description " + gist.getDescription());
-    			GistUploader.uploadGist(client, gist, userGists, gistOutputDirectory, getEncoding());
+
+                GistCorrelationStrategy correlationStrategy = gist.getCorrelationStrategy()
+                        .getGistCorrelationStrategy();
+
+                getLog().debug("Processing gist with description " + gist.getDescription());
+
+                org.eclipse.egit.github.core.Gist converted = createGist(gistCount, gist, snippetManager);
+                uploader.uploadGist(converted, correlationStrategy);
     			
     			gistCount++;
     		}
@@ -56,6 +58,34 @@ public class GistMojo extends AbstractGistMojo {
     	} catch ( IOException e ) {
             throw new MojoExecutionException( "Error executing Gist upload mojo", e );
         }
+    }
+
+    private org.eclipse.egit.github.core.Gist createGist(int tempGistId, org.vromero.gist.mojo.Gist upload,
+                                                         SnippetManager snippetManager) throws IOException {
+        Map<String, String> files = new HashMap<String, String>(upload.getFiles().size());
+
+        Map<String,GistFile> gistFiles = new HashMap<String,GistFile>(files.size());
+        for (SnippetFile file : upload.getFiles()) {
+            GistFile gistFile = readSnippetAsGistFile(tempGistId, file, snippetManager);
+            gistFiles.put(file.getGistFileName(), gistFile);
+        }
+
+        org.eclipse.egit.github.core.Gist gist = new org.eclipse.egit.github.core.Gist()
+                .setDescription(upload.getDescription())
+                .setPublic(upload.isPublic())
+                .setFiles(gistFiles);
+
+        return gist;
+    }
+
+    private GistFile readSnippetAsGistFile(int tempGistId, SnippetFile snippetFile,
+                                           SnippetManager snippetManager) throws IOException {
+
+        String fileContent = snippetManager.readSnippet(String.valueOf(tempGistId), snippetFile.getSnippetId());
+
+        return new GistFile()
+                .setContent(fileContent)
+                .setFilename(snippetFile.getGistFileName());
     }
     
 }

@@ -24,7 +24,6 @@
 		<version>2.1.5</version>
 		<scope>compile</scope>
   	</dependency>
-  	
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
@@ -41,6 +40,7 @@
       <artifactId>plexus-utils</artifactId>
       <version>3.0.16</version>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

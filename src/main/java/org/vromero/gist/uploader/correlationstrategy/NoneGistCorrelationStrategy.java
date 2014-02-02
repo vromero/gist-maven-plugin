@@ -1,4 +1,4 @@
-package org.vromero.gist.mojo;
+package org.vromero.gist.uploader.correlationstrategy;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,43 +19,25 @@ package org.vromero.gist.mojo;
  * under the License.
  */
 
-import org.apache.maven.plugins.annotations.Parameter;
+import org.eclipse.egit.github.core.Gist;
 
-import java.io.File;
+import java.util.List;
 
-public class SnippetFile {
 
-	@Parameter(required = true )
-	private File location;
-	
-	@Parameter(required = false )
-	private String snippetId;
-	
-	@Parameter(required = true )
-	private String gistFileName;
+/**
+ * Dummy correlation strategy that will make no effort to try to correlate. It will return always a null correlation.
+ * Typically used with the intention of always upload a new gist regardless if it exist already.
+ */
+public class NoneGistCorrelationStrategy implements GistCorrelationStrategy {
 
-	public File getLocation() {
-		return location;
-	}
-
-	public void setLocation(File location) {
-		this.location = location;
-	}
-
-	public String getSnippetId() {
-		return snippetId;
-	}
-
-	public void setSnippetId(String snippetId) {
-		this.snippetId = snippetId;
-	}
-
-	public String getGistFileName() {
-		return gistFileName;
-	}
-
-	public void setGistFileName(String gistFileName) {
-		this.gistFileName = gistFileName;
+    /**
+     * Return always a null correlation.
+     * @param gist the gist to correlate
+     * @param userGists list of gists to be iterated
+     * @return null
+     */
+	public Gist correlate(Gist gist, List<Gist> userGists) {
+		return null;
 	}
 	
 }

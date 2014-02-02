@@ -1,4 +1,4 @@
-package org.vromero.gist.uploader;
+package org.vromero.gist.uploader.correlationstrategy;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,16 +19,26 @@ package org.vromero.gist.uploader;
  * under the License.
  */
 
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.egit.github.core.Gist;
 
-public class DescriptionCorrelationStrategy {
+/**
+ * Strategy to correlate using the description field of the gists.
+ */
+public class DescriptionGistCorrelationStrategy implements GistCorrelationStrategy {
 
-	public Gist correlate(List<Gist> userGists, Gist gist) throws IOException {
-		
-		for (Gist candidate : userGists) {
+    // TODO: check for uniqueness
+
+    /**
+     * Correlate against the userGists the given gist using the description field
+     * @param gist the gist to correlate
+     * @param userGists list of gists to be iterated
+     * @return gist correlated or null if not found
+     */
+	@Override
+    public Gist correlate(Gist gist, List<Gist> userGists) {
+        for (Gist candidate : userGists) {
 			if (candidate.getDescription().equals(gist.getDescription())) {
 				return candidate;
 			}

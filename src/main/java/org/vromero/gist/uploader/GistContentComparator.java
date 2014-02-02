@@ -19,35 +19,58 @@ package org.vromero.gist.uploader;
  * under the License.
  */
 
-import java.io.IOException;
-
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.egit.github.core.Gist;
 import org.eclipse.egit.github.core.GistFile;
 
+/**
+ * Comparator for gists. Will decide if the difference between two Gists is enough to perform an update.
+ *
+ */
 public class GistContentComparator {
 
-	public static boolean isUpdateNeeded(Gist gist, Gist candidate) throws IOException {
+    Log log;
 
-		if (!StringUtils.equals(gist.getDescription(), candidate.getDescription())) {
-			return false;
+    public GistContentComparator(Log log) {
+        this.log = log;
+    }
+
+    /**
+     * Checks if the difference between two Gists is enough to perform an update.
+     *
+     * @param original the online gist
+     * @param candidate the potentially new gist
+     * @return true if the gist requires update
+     */
+	public boolean isUpdateNeeded(Gist original, Gist candidate) {
+
+		if (!StringUtils.equals(original.getDescription(), candidate.getDescription())) {
+            log.debug("Update needed as descriptions differ");
+			return true;
 		}
 		
-		if (gist.getFiles().size() != candidate.getFiles().size()) {
-			return false;
+		if (original.getFiles().size() != candidate.getFiles().size()) {
+            log.debug("Update needed as number of files differ");
+			return true;
 		}
 		
-		for (String fileName : gist.getFiles().keySet()) {
+		for (String fileName : original.getFiles().keySet()) {
 			GistFile gistFile = candidate.getFiles().get(fileName);
 			if (gistFile == null) {
-				return false;
+                log.debug("Update needed as at least one file in not present in the candidate");
+				return true;
 			}
-			
-			if (StringUtils.equals(gistFile.getContent(), gist.getFiles().get(fileName).getContent())) {
-				return false;
+
+            log.debug(gistFile.getContent());
+            log.debug(original.getFiles().get(fileName).getContent());
+
+			if (!StringUtils.equals(gistFile.getContent(), original.getFiles().get(fileName).getContent())) {
+                log.debug("Update needed as at least one file differ in contents");
+				return true;
 			}
 		}
 		
-		return true;
+		return false;
 	}
 }

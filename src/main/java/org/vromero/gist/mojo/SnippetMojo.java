@@ -19,29 +19,28 @@ package org.vromero.gist.mojo;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.codehaus.plexus.util.FileUtils;
-import org.vromero.gist.snippet.SnippetReader;
+import org.vromero.gist.snippet.SnippetManager;
+
+import java.io.IOException;
 
 @Mojo( name = "snippet", defaultPhase = LifecyclePhase.SITE, requiresOnline = true, requiresProject = true)
 public class SnippetMojo extends AbstractGistMojo {
 	
     public void execute() throws MojoExecutionException {
-    	int gistCount = 0;
+
+        SnippetManager snippetManager = new SnippetManager(getEncoding(), getOutputDirectory());
 
     	try {
+            int gistCount = 0;
+
     		for (Gist gist : getGists()) {
-    			File gistOutputDirectory = openOrCreateOutputDirectory(gistCount);
-    			
+
     			for (SnippetFile file : gist.getFiles()) {
     				getLog().debug("Generating snippet for " + file.getGistFileName() + " and snippetId " + file.getSnippetId());
-    				processFile(file.getLocation(), file.getSnippetId(), gistOutputDirectory);	
+                    snippetManager.createSnippet(file.getLocation(), String.valueOf(gistCount), file.getSnippetId());
     			}
     			
     			gistCount++;
@@ -51,17 +50,6 @@ public class SnippetMojo extends AbstractGistMojo {
         }
     }
 
-    private File openOrCreateOutputDirectory(int gistCount) throws IOException {
-    	File gistOutputDirectory = new File(getOutputDirectory(), "gist-" + String.valueOf(gistCount));
-		FileUtils.forceMkdir(gistOutputDirectory);
-		return gistOutputDirectory;
-    }
-    
-    private void processFile(File inputFile, String snippetId, File outputDirectory) throws IOException {
-       	URL url = FileUtils.toURLs(new File[]{inputFile})[0];
-        SnippetReader snippetReader = new SnippetReader(url, getEncoding());
-        File file = new File( outputDirectory, snippetId);
-        FileUtils.fileWrite(file, getEncoding(), snippetReader.readSnippet(snippetId).toString());
-    }
+
 
 }

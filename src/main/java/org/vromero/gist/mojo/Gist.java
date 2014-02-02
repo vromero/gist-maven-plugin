@@ -19,16 +19,12 @@ package org.vromero.gist.mojo;
  * under the License.
  */
 
-import java.util.List;
-
 import org.apache.maven.plugins.annotations.Parameter;
+
+import java.util.List;
 
 public class Gist {
 
-	public enum CorrelationStrategy {
-        DESCRIPTION, NONE
-    }
-    
     @Parameter(property = "correlationStrategy")
     private CorrelationStrategy correlationStrategy;
     

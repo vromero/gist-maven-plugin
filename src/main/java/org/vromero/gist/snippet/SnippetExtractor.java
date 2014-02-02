@@ -19,6 +19,8 @@ package org.vromero.gist.snippet;
  * under the License.
  */
 
+import org.codehaus.plexus.util.IOUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,18 +29,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.codehaus.plexus.util.IOUtil;
-
 /**
- * This file was borrowed from the Doxia Maven Plugin: http://svn.apache.org/viewvc/maven/doxia/doxia/tags/doxia-1.5/doxia-core/src/main/java/org/apache/maven/doxia/macro/snippet/SnippetReader.java?view=log
+ * This file was borrowed from the Doxia Maven Plugin: http://svn.apache.org/viewvc/maven/doxia/doxia/tags/doxia-1.5/doxia-core/src/main/java/org/apache/maven/doxia/macro/snippet/SnippetExtractor.java?view=log
  */
 
 /**
  * Utility class for reading snippets.
  *
- * @version $Id: SnippetReader.java 1544338 2013-11-21 21:59:01Z michaelo $
+ * @version $Id: SnippetExtractor.java 1544338 2013-11-21 21:59:01Z michaelo $
  */
-public class SnippetReader
+public class SnippetExtractor
 {
     /** System-dependent EOL. */
     private static final String EOL = System.getProperty( "line.separator" );
@@ -55,7 +55,7 @@ public class SnippetReader
      * @param src The source
      * @param encoding The file encoding
      */
-    public SnippetReader( URL src, String encoding )
+    public SnippetExtractor(URL src, String encoding)
     {
         this.source = src;
         this.encoding = encoding;
@@ -66,7 +66,7 @@ public class SnippetReader
      *
      * @param src The source
      */
-    public SnippetReader( URL src )
+    public SnippetExtractor(URL src)
     {
         this( src, null ) ;
     }

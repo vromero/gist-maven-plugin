@@ -19,11 +19,11 @@ package org.vromero.gist.mojo;
  * under the License.
  */
 
-import java.io.File;
-import java.util.List;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import java.io.File;
+import java.util.List;
 
 public abstract class AbstractGistMojo extends AbstractMojo {
 
