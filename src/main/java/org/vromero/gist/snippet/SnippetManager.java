@@ -10,6 +10,8 @@ import static org.codehaus.plexus.util.FileUtils.*;
 
 public class SnippetManager {
 
+    private static final String GIST_DIR_PREFIX = "gist-";
+
     private File outputDirectory;
 
     private String encoding;
@@ -34,8 +36,7 @@ public class SnippetManager {
     }
 
     private File openOrCreateOutputDirectory(String tempGistId) throws IOException {
-        // TODO: extract file pattern constant
-        File gistOutputDirectory = new File(outputDirectory, "gist-" + tempGistId);
+        File gistOutputDirectory = new File(outputDirectory, GIST_DIR_PREFIX + tempGistId);
         forceMkdir(gistOutputDirectory);
         return gistOutputDirectory;
     }
