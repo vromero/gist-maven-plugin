@@ -50,6 +50,4 @@ public class SnippetMojo extends AbstractGistMojo {
         }
     }
 
-
-
 }

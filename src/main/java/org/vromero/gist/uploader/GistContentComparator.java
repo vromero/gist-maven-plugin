@@ -62,9 +62,6 @@ public class GistContentComparator {
 				return true;
 			}
 
-            log.debug(gistFile.getContent());
-            log.debug(original.getFiles().get(fileName).getContent());
-
 			if (!StringUtils.equals(gistFile.getContent(), original.getFiles().get(fileName).getContent())) {
                 log.debug("Update needed as at least one file differ in contents");
 				return true;

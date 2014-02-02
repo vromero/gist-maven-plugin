@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mojo( name = "upload", defaultPhase = LifecyclePhase.SITE_DEPLOY, requiresOnline = true, requiresProject = true)
-public class GistMojo extends AbstractGistMojo {
+@Mojo( name = "deploy", defaultPhase = LifecyclePhase.SITE_DEPLOY, requiresOnline = true, requiresProject = true)
+public class DeployMojo extends AbstractGistMojo {
     
     public void execute() throws MojoExecutionException {
 
