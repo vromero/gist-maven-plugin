@@ -30,7 +30,7 @@ import org.eclipse.egit.github.core.GistFile;
  */
 public class GistContentComparator {
 
-    Log log;
+    private Log log;
 
     public GistContentComparator(Log log) {
         this.log = log;
