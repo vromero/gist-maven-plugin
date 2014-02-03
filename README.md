@@ -86,13 +86,13 @@ default value. Meanwhile, this will remain mandatory.
 
 ### Plugin execution
 
-    mvn org.vromero:gist-maven-plugin:gist
-    mvn org.vromero:gist-maven-plugin:upload
+    mvn org.vromero:gist-maven-plugin:snippet
+    mvn org.vromero:gist-maven-plugin:deploy
 
 This can be simplified by adding the following ```pluginGroup``` to the ```pluginGroups``` section of your
 ```$HOME/.m2/settings.xml```.
 
- ```xml
+```xml
 <pluginGroups>
     <pluginGroup>org.vromero</pluginGroup>
 </pluginGroups>
@@ -100,8 +100,8 @@ This can be simplified by adding the following ```pluginGroup``` to the ```plugi
 
 With this ```pluginGroup``` added we can invoke the mojos with:
 
-    mvn gist:gist
-    mvn gist:upload
+    mvn gist:snippet
+    mvn gist:deploy
 
 ## Maintainers
 * [Victor Romero](http://www.vromero.org)
