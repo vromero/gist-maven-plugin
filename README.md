@@ -96,7 +96,7 @@ This can be simplified by adding the following ```pluginGroup``` to the ```plugi
 <pluginGroups>
     <pluginGroup>org.vromero</pluginGroup>
 </pluginGroups>
- ```
+```
 
 With this ```pluginGroup``` added we can invoke the mojos with:
 
