@@ -47,11 +47,14 @@ JSP
 
 ## Plugin Configuration
 
+This plugin is published to the Sonatype OSS Repository and therefor, is available from maven central. No special
+repository configuration is required.
+
 ```xml
 <plugin>
     <groupId>org.vromero</groupId>
     <artifactId>gist-maven-plugin</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <configuration>
         <username>MyUserName</username>
         <password>myp4ssw0rd!</password>
