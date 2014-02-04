@@ -90,7 +90,7 @@ default value. Meanwhile, this will remain mandatory.
     mvn org.vromero:gist-maven-plugin:deploy
 
 This can be simplified by adding the following ```pluginGroup``` to the ```pluginGroups``` section of your
-```$HOME/.m2/settings.xml```.
+```$HOME/.m2/settings.xml``` .
 
 ```xml
 <pluginGroups>
