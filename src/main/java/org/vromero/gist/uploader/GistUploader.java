@@ -90,4 +90,7 @@ public class GistUploader {
         return service;
     }
 
+    public void setService(GistService service) {
+        this.service = service;
+    }
 }

@@ -72,6 +72,13 @@
                         </goals>
                     </execution>
                 </executions>
+
+                <configuration>
+                    <excludes>
+                        <exclude>**/HelpMojo.*</exclude>
+                    </excludes>
+                </configuration>
+
             </plugin>
 
 
