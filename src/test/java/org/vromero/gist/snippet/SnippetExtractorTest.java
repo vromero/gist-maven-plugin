@@ -28,7 +28,7 @@ public class SnippetExtractorTest {
 
     @Test
     public void testXmlSnippet() throws IOException {
-        URL url = getClass().getClassLoader().getResource("snippet/Xml.xml");
+        URL url = getClass().getClassLoader().getResource("snippet/xml.xml");
         Assert.assertNotNull(url);
 
         extractor = new SnippetExtractor(url, "UTF-8");
