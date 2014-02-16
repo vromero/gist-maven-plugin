@@ -35,6 +35,9 @@ public class GistUploaderTest {
     @MockitoAnnotations.Mock
     private GistCorrelationStrategy correlationStrategy;
 
+    @MockitoAnnotations.Mock
+    private GistContentComparator comparator;
+
 
     @Before
     public void setUp() {
@@ -54,6 +57,36 @@ public class GistUploaderTest {
         verify(service, atLeastOnce()).createGist(gist);
     }
 
-    // TODO: This test class is not yet completed
+    @Test
+    public void uploadGistCorrelatedTestWithUpdate() throws IOException {
+        Gist gistCorrelated = new Gist();
+        gistCorrelated.setDescription("QWERTY");
+        when(correlationStrategy.correlate(any(Gist.class), any(List.class))).thenReturn(gistCorrelated);
+        when(comparator.isUpdateNeeded(any(Gist.class), any(Gist.class))).thenReturn(true);
+        uploader.setComparator(comparator);
+
+        Gist gist = new Gist();
+        gist.setDescription("QWERTY");
+
+        uploader.uploadGist(gist, correlationStrategy );
+
+        verify(service, atLeastOnce()).updateGist(gist);
+    }
+
+    @Test
+    public void uploadGistCorrelatedTestWithoutUpdate() throws IOException {
+        Gist gistCorrelated = new Gist();
+        gistCorrelated.setDescription("QWERTY");
+        when(correlationStrategy.correlate(any(Gist.class), any(List.class))).thenReturn(gistCorrelated);
+        when(comparator.isUpdateNeeded(any(Gist.class), any(Gist.class))).thenReturn(false);
+        uploader.setComparator(comparator);
+
+        Gist gist = new Gist();
+        gist.setDescription("QWERTY");
+
+        uploader.uploadGist(gist, correlationStrategy );
+
+        verify(service, never()).updateGist(gist);
+    }
 
 }
