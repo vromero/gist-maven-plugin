@@ -39,6 +39,8 @@ public class GistUploader {
 
     private GistService service;
 
+    private GistContentComparator comparator;
+
     List<Gist> userGists;
 
     public GistUploader(String username, String password, Log log) {
@@ -46,11 +48,11 @@ public class GistUploader {
         this.username = username;
         this.password = password;
         this.service = buildService(username, password);
+        comparator = new GistContentComparator(log);
     }
 
     public void uploadGist(Gist gist, GistCorrelationStrategy correlationStrategy) throws IOException {
 		Gist correlatedGist = correlationStrategy.correlate(gist, getGists());
-        GistContentComparator comparator = new GistContentComparator(log);
 
 		if (correlatedGist != null) {
             if (comparator.isUpdateNeeded(gist, correlatedGist)) {
@@ -92,5 +94,9 @@ public class GistUploader {
 
     public void setService(GistService service) {
         this.service = service;
+    }
+
+    public void setComparator(GistContentComparator comparator) {
+        this.comparator = comparator;
     }
 }

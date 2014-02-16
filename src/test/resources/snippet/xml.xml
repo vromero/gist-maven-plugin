@@ -1,0 +1,12 @@
+
+<something>
+<!-- START SNIPPET: snip-id -->
+<navigation-rule>
+    <from-view-id>/logon.jsp</from-view-id>
+    <navigation-case>
+        <from-outcome>success</from-outcome>
+        <to-view-id>/mainMenu.jsp</to-view-id>
+    </navigation-case>
+</navigation-rule>
+<!-- END SNIPPET: snip-id -->
+</something>
