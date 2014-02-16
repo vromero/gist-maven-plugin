@@ -115,7 +115,13 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>**/HelpMojo.*</exclude>
+                        <!-- exclude generated code -->
+                        <exclude>**/mojo/HelpMojo.*</exclude>
+
+                        <!-- exclude POJO -->
+                        <exclude>**/mojo/CorrelationStrategy.java</exclude>
+                        <exclude>**/mojo/Gist.java</exclude>
+                        <exclude>**/mojo/SnippetFile.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
