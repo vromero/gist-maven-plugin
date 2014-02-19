@@ -28,11 +28,15 @@ import java.io.IOException;
 
 @Mojo( name = "snippet", defaultPhase = LifecyclePhase.SITE, requiresOnline = true, requiresProject = true)
 public class SnippetMojo extends AbstractGistMojo {
-	
+
+    private SnippetManager snippetManager;
+
+    public SnippetMojo() {
+        super();
+        snippetManager = new SnippetManager(getEncoding(), getOutputDirectory());
+    }
+
     public void execute() throws MojoExecutionException {
-
-        SnippetManager snippetManager = new SnippetManager(getEncoding(), getOutputDirectory());
-
     	try {
             int gistCount = 0;
 
@@ -50,4 +54,7 @@ public class SnippetMojo extends AbstractGistMojo {
         }
     }
 
+    public void setSnippetManager(SnippetManager snippetManager) {
+        this.snippetManager = snippetManager;
+    }
 }
