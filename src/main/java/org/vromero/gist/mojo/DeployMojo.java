@@ -33,14 +33,18 @@ import java.util.Map;
 
 @Mojo( name = "deploy", defaultPhase = LifecyclePhase.SITE_DEPLOY, requiresOnline = true, requiresProject = true)
 public class DeployMojo extends AbstractGistMojo {
-    
+
+    private GistUploader uploader;
+
+    private SnippetManager snippetManager;
+
     public void execute() throws MojoExecutionException {
 
     	try {
     		int gistCount = 0;
 
-            GistUploader uploader = new GistUploader(getUsername(), getPassword(), getLog());
-            SnippetManager snippetManager = new SnippetManager(getEncoding(), getOutputDirectory());
+            uploader = getUploader();
+            snippetManager = getSnippetManager();
 
     		for (Gist gist : getGists()) {
 
@@ -87,5 +91,21 @@ public class DeployMojo extends AbstractGistMojo {
                 .setContent(fileContent)
                 .setFilename(snippetFile.getGistFileName());
     }
-    
+
+    private GistUploader getUploader() {
+        return uploader == null ? new GistUploader(getUsername(), getPassword(), getLog()) : uploader;
+    }
+
+    public void setUploader(GistUploader uploader) {
+        this.uploader = uploader;
+    }
+
+    private SnippetManager getSnippetManager() {
+        return snippetManager == null ? new SnippetManager(getEncoding(), getOutputDirectory()) : snippetManager;
+    }
+
+    public void setSnippetManager(SnippetManager snippetManager ) {
+        this.snippetManager = snippetManager;
+    }
+
 }
