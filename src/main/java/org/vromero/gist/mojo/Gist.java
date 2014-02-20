@@ -21,6 +21,7 @@ package org.vromero.gist.mojo;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Gist {
@@ -34,7 +35,7 @@ public class Gist {
     @Parameter(property = "public", defaultValue = "true")
 	private boolean isPublic;
 
-    @Parameter(property = "files")
+    @Parameter(property = "files", required = true)
     private List<SnippetFile> files;
     
 	public String getDescription() {
@@ -54,7 +55,7 @@ public class Gist {
 	}
 
 	public List<SnippetFile> getFiles() {
-		return files;
+		return files == null ? Collections.<SnippetFile>emptyList() : files;
 	}
 	
 	public void setFiles(List<SnippetFile> files) {

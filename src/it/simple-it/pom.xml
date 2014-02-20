@@ -1,34 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.vromero.it</groupId>
-  <artifactId>simple-it</artifactId>
-  <version>1.0-SNAPSHOT</version>
+    <groupId>org.vromero.it</groupId>
+    <artifactId>complete</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-  <description>A simple IT verifying the basic use case.</description>
+    <description>A simple IT verifying the basic use case.</description>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>@project.groupId@</groupId>
-        <artifactId>@project.artifactId@</artifactId>
-        <version>@project.version@</version>
-        <executions>
-          <execution>
-            <id>touch</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>touch</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+
+                <executions>
+                    <execution>
+                        <id>complete</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>snippet</goal>
+                        </goals>
+                        <configuration>
+                            <username>MyUserName</username>
+                            <password>myp4ssw0rd!</password>
+                            <outputDir>${project.build.directory}/gists</outputDir>
+                            <gists>
+                                <gist>
+                                    <correlationStrategy>DESCRIPTION</correlationStrategy>
+                                    <description>${mule.documentation.version}_message-sources_flowWithPoll
+                                    </description>
+                                    <public>true</public>
+                                    <files>
+                                        <file>
+                                            <location>src/main/java/Java.java</location>
+                                            <snippetId>snip-id</snippetId>
+                                            <gistFileName>JavaCode</gistFileName>
+                                        </file>
+                                    </files>
+                                </gist>
+                            </gists>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>incomplete-optionals</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>snippet</goal>
+                        </goals>
+                        <configuration>
+                            <username>MyUserName</username>
+                            <password>myp4ssw0rd!</password>
+                            <gists>
+                                <gist>
+                                    <description>${mule.documentation.version}_message-sources_flowWithPoll
+                                    </description>
+                                    <files>
+                                        <file>
+                                            <location>src/main/java/Java.java</location>
+                                            <snippetId>snip-id</snippetId>
+                                            <gistFileName>JavaCode</gistFileName>
+                                        </file>
+                                    </files>
+                                </gist>
+                            </gists>
+                        </configuration>
+                    </execution>
+
+
+                    <execution>
+                        <id>incomplete-file</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>snippet</goal>
+                        </goals>
+                        <configuration>
+                            <username>MyUserName</username>
+                            <password>myp4ssw0rd!</password>
+                            <gists>
+                                <gist>
+                                    <description>${mule.documentation.version}_message-sources_flowWithPoll
+                                    </description>
+                                    <files>
+                                    </files>
+                                </gist>
+                            </gists>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>incomplete-files</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>snippet</goal>
+                        </goals>
+                        <configuration>
+                            <username>MyUserName</username>
+                            <password>myp4ssw0rd!</password>
+                            <gists>
+                                <gist>
+                                    <description>${mule.documentation.version}_message-sources_flowWithPoll
+                                    </description>
+                                </gist>
+                            </gists>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>incomplete-gists</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>snippet</goal>
+                        </goals>
+                        <configuration>
+                            <username>MyUserName</username>
+                            <password>myp4ssw0rd!</password>
+                        </configuration>
+                    </execution>
+
+                </executions>
+
+            </plugin>
+        </plugins>
+    </build>
 </project>

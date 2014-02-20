@@ -23,6 +23,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractGistMojo extends AbstractMojo {
@@ -30,7 +31,7 @@ public abstract class AbstractGistMojo extends AbstractMojo {
 	@Parameter( defaultValue = "${project.build.directory}/gists", property = "outputDir", required = true)
     private File outputDirectory;
     
-    @Parameter(property = "gists")
+    @Parameter(property = "gists", required = true)
     private List<Gist> gists;
     
     @Parameter(property = "username")
@@ -51,7 +52,7 @@ public abstract class AbstractGistMojo extends AbstractMojo {
 	}
 
 	public List<Gist> getGists() {
-		return gists;
+		return gists == null ? Collections.<Gist>emptyList() : gists;
 	}
 
 	public void setGists(List<Gist> gists) {
