@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GistContentComparator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gist-maven-plugin Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.vromero.gist.uploader</a> &gt; <span class="el_source">GistContentComparator.java</span></div><h1>GistContentComparator.java</h1><pre class="source lang-java linenums">package org.vromero.gist.uploader;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.util.StringUtils;
+import org.eclipse.egit.github.core.Gist;
+import org.eclipse.egit.github.core.GistFile;
+
+/**
+ * Comparator for gists. Will decide if the difference between two Gists is enough to perform an update.
+ *
+ */
+public class GistContentComparator {
+
+    private Log log;
+
+<span class="fc" id="L35">    public GistContentComparator(Log log) {</span>
+<span class="fc" id="L36">        this.log = log;</span>
+<span class="fc" id="L37">    }</span>
+
+    /**
+     * Checks if the difference between two Gists is enough to perform an update.
+     *
+     * @param original the online gist
+     * @param candidate the potentially new gist
+     * @return true if the gist requires update
+     */
+	public boolean isUpdateNeeded(Gist original, Gist candidate) {
+
+<span class="fc bfc" id="L48" title="All 2 branches covered.">		if (!StringUtils.equals(original.getDescription(), candidate.getDescription())) {</span>
+<span class="fc" id="L49">            log.debug(&quot;Update needed as descriptions differ&quot;);</span>
+<span class="fc" id="L50">			return true;</span>
+		}
+		
+<span class="fc bfc" id="L53" title="All 2 branches covered.">		if (original.getFiles().size() != candidate.getFiles().size()) {</span>
+<span class="fc" id="L54">            log.debug(&quot;Update needed as number of files differ&quot;);</span>
+<span class="fc" id="L55">			return true;</span>
+		}
+		
+<span class="fc bfc" id="L58" title="All 2 branches covered.">		for (String fileName : original.getFiles().keySet()) {</span>
+<span class="fc" id="L59">			GistFile gistFile = candidate.getFiles().get(fileName);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">			if (gistFile == null) {</span>
+<span class="fc" id="L61">                log.debug(&quot;Update needed as at least one file in not present in the candidate&quot;);</span>
+<span class="fc" id="L62">				return true;</span>
+			}
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">			if (!StringUtils.equals(gistFile.getContent(), original.getFiles().get(fileName).getContent())) {</span>
+<span class="fc" id="L66">                log.debug(&quot;Update needed as at least one file differ in contents&quot;);</span>
+<span class="fc" id="L67">				return true;</span>
+			}
+<span class="fc" id="L69">		}</span>
+		
+<span class="fc" id="L71">		return false;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>
