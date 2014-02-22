@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NoneGistCorrelationStrategy.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gist-maven-plugin Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.vromero.gist.uploader.correlationstrategy</a> &gt; <span class="el_source">NoneGistCorrelationStrategy.java</span></div><h1>NoneGistCorrelationStrategy.java</h1><pre class="source lang-java linenums">package org.vromero.gist.uploader.correlationstrategy;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import org.eclipse.egit.github.core.Gist;
+
+import java.util.List;
+
+
+/**
+ * Dummy correlation strategy that will make no effort to try to correlate. It will return always a null correlation.
+ * Typically used with the intention of always upload a new gist regardless if it exist already.
+ */
+<span class="fc" id="L31">public class NoneGistCorrelationStrategy implements GistCorrelationStrategy {</span>
+
+    /**
+     * Return always a null correlation.
+     * @param gist the gist to correlate
+     * @param userGists list of gists to be iterated
+     * @return null
+     */
+	public Gist correlate(Gist gist, List&lt;Gist&gt; userGists) {
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (gist == null) {</span>
+<span class="fc" id="L41">            throw new IllegalArgumentException(&quot;gist cannot be null&quot;);</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        } else if (userGists == null) {</span>
+<span class="fc" id="L43">            throw new IllegalArgumentException(&quot;user gists cannot be null&quot;);</span>
+        }
+
+<span class="fc" id="L46">		return null;</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

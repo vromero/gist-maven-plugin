@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DeployMojo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gist-maven-plugin Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.vromero.gist.mojo</a> &gt; <span class="el_source">DeployMojo.java</span></div><h1>DeployMojo.java</h1><pre class="source lang-java linenums">package org.vromero.gist.mojo;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.eclipse.egit.github.core.GistFile;
+import org.vromero.gist.snippet.SnippetManager;
+import org.vromero.gist.uploader.GistUploader;
+import org.vromero.gist.uploader.correlationstrategy.GistCorrelationStrategy;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+@Mojo( name = &quot;deploy&quot;, defaultPhase = LifecyclePhase.SITE_DEPLOY, requiresOnline = true, requiresProject = true)
+<span class="fc" id="L35">public class DeployMojo extends AbstractGistMojo {</span>
+
+    private GistUploader uploader;
+
+    private SnippetManager snippetManager;
+
+    public void execute() throws MojoExecutionException {
+
+    	try {
+<span class="fc" id="L44">    		int gistCount = 0;</span>
+
+<span class="fc" id="L46">            uploader = getUploader();</span>
+<span class="fc" id="L47">            snippetManager = getSnippetManager();</span>
+
+<span class="fc bfc" id="L49" title="All 2 branches covered.">    		for (Gist gist : getGists()) {</span>
+
+<span class="fc" id="L51">                GistCorrelationStrategy correlationStrategy = gist.getCorrelationStrategy()</span>
+                        .getGistCorrelationStrategy();
+
+<span class="fc" id="L54">                getLog().debug(&quot;Processing gist with description &quot; + gist.getDescription());</span>
+
+<span class="fc" id="L56">                org.eclipse.egit.github.core.Gist converted = createGist(gistCount, gist, snippetManager);</span>
+<span class="fc" id="L57">                uploader.uploadGist(converted, correlationStrategy);</span>
+    			
+<span class="fc" id="L59">    			gistCount++;</span>
+<span class="fc" id="L60">    		}</span>
+    		
+<span class="nc" id="L62">    	} catch ( IOException e ) {</span>
+<span class="nc" id="L63">            throw new MojoExecutionException( &quot;Error executing Gist upload mojo&quot;, e );</span>
+<span class="fc" id="L64">        }</span>
+<span class="fc" id="L65">    }</span>
+
+    private org.eclipse.egit.github.core.Gist createGist(int tempGistId, org.vromero.gist.mojo.Gist upload,
+                                                         SnippetManager snippetManager) throws IOException {
+<span class="fc" id="L69">        Map&lt;String, String&gt; files = new HashMap&lt;String, String&gt;(upload.getFiles().size());</span>
+
+<span class="fc" id="L71">        Map&lt;String,GistFile&gt; gistFiles = new HashMap&lt;String,GistFile&gt;(files.size());</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        for (SnippetFile file : upload.getFiles()) {</span>
+<span class="fc" id="L73">            GistFile gistFile = readSnippetAsGistFile(tempGistId, file, snippetManager);</span>
+<span class="fc" id="L74">            gistFiles.put(file.getGistFileName(), gistFile);</span>
+<span class="fc" id="L75">        }</span>
+
+<span class="fc" id="L77">        org.eclipse.egit.github.core.Gist gist = new org.eclipse.egit.github.core.Gist()</span>
+                .setDescription(upload.getDescription())
+                .setPublic(upload.isPublic())
+                .setFiles(gistFiles);
+
+<span class="fc" id="L82">        return gist;</span>
+    }
+
+    private GistFile readSnippetAsGistFile(int tempGistId, SnippetFile snippetFile,
+                                           SnippetManager snippetManager) throws IOException {
+
+<span class="fc" id="L88">        String fileContent = snippetManager.readSnippet(String.valueOf(tempGistId), snippetFile.getSnippetId());</span>
+
+<span class="fc" id="L90">        return new GistFile()</span>
+                .setContent(fileContent)
+                .setFilename(snippetFile.getGistFileName());
+    }
+
+    private GistUploader getUploader() {
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        return uploader == null ? new GistUploader(getUsername(), getPassword(), getLog()) : uploader;</span>
+    }
+
+    public void setUploader(GistUploader uploader) {
+<span class="fc" id="L100">        this.uploader = uploader;</span>
+<span class="fc" id="L101">    }</span>
+
+    private SnippetManager getSnippetManager() {
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        return snippetManager == null ? new SnippetManager(getEncoding(), getOutputDirectory()) : snippetManager;</span>
+    }
+
+    public void setSnippetManager(SnippetManager snippetManager ) {
+<span class="fc" id="L108">        this.snippetManager = snippetManager;</span>
+<span class="fc" id="L109">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>

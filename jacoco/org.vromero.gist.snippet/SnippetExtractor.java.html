@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SnippetExtractor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gist-maven-plugin Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.vromero.gist.snippet</a> &gt; <span class="el_source">SnippetExtractor.java</span></div><h1>SnippetExtractor.java</h1><pre class="source lang-java linenums">package org.vromero.gist.snippet;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * &quot;License&quot;); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import org.codehaus.plexus.util.IOUtil;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/**
+ * This file was borrowed from the Doxia Maven Plugin: http://svn.apache.org/viewvc/maven/doxia/doxia/tags/doxia-1.5/doxia-core/src/main/java/org/apache/maven/doxia/macro/snippet/SnippetExtractor.java?view=log
+ */
+
+/**
+ * Utility class for reading snippets.
+ *
+ * @version $Id: SnippetExtractor.java 1544338 2013-11-21 21:59:01Z michaelo $
+ */
+public class SnippetExtractor
+{
+    /** System-dependent EOL. */
+<span class="fc" id="L44">    private static final String EOL = System.getProperty( &quot;line.separator&quot; );</span>
+
+    /** The source. */
+    private URL source;
+
+    /** The encoding of the source. */
+    private String encoding;
+
+    /**
+     * Constructor.
+     *
+     * @param src The source
+     * @param encoding The file encoding
+     */
+    public SnippetExtractor(URL src, String encoding)
+<span class="fc" id="L59">    {</span>
+<span class="fc" id="L60">        this.source = src;</span>
+<span class="fc" id="L61">        this.encoding = encoding;</span>
+<span class="fc" id="L62">    }</span>
+
+    /**
+     * Constructor.
+     *
+     * @param src The source
+     */
+    public SnippetExtractor(URL src)
+    {
+<span class="nc" id="L71">        this( src, null ) ;</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Reads the snippet with given id.
+     *
+     * @param snippetId The id of the snippet.
+     * @return The snippet.
+     * @throws java.io.IOException if something goes wrong.
+     */
+    public StringBuffer readSnippet( String snippetId )
+        throws IOException
+    {
+<span class="fc" id="L84">        List&lt;String&gt; lines = readLines( snippetId );</span>
+<span class="fc" id="L85">        int minIndent = minIndent( lines );</span>
+<span class="fc" id="L86">        StringBuffer result = new StringBuffer();</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        for ( String line : lines )</span>
+        {
+<span class="fc" id="L89">            result.append( line.substring( minIndent ) );</span>
+<span class="fc" id="L90">            result.append( EOL );</span>
+        }
+<span class="fc" id="L92">        return result;</span>
+    }
+
+    /**
+     * Returns the minimal indent of all the lines in the given List.
+     *
+     * @param lines A List of lines.
+     * @return the minimal indent.
+     */
+    int minIndent( List&lt;String&gt; lines )
+    {
+<span class="fc" id="L103">        int minIndent = Integer.MAX_VALUE;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        for ( String line : lines )</span>
+        {
+<span class="fc" id="L106">            minIndent = Math.min( minIndent, indent( line ) );</span>
+        }
+<span class="fc" id="L108">        return minIndent;</span>
+    }
+
+    /**
+     * Returns the indent of the given line.
+     *
+     * @param line A line.
+     * @return the indent.
+     */
+    int indent( String line )
+    {
+<span class="fc" id="L119">        char[] chars = line.toCharArray();</span>
+<span class="fc" id="L120">        int indent = 0;</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        for ( ; indent &lt; chars.length; indent++ )</span>
+        {
+<span class="fc bfc" id="L123" title="All 2 branches covered.">            if ( chars[indent] != ' ' )</span>
+            {
+<span class="fc" id="L125">                break;</span>
+            }
+        }
+<span class="fc" id="L128">        return indent;</span>
+    }
+
+    /**
+     * Reads the snippet and returns the lines in a List.
+     *
+     * @param snippetId The id of the snippet.
+     * @return A List of lines.
+     * @throws IOException if something goes wrong.
+     */
+    private List&lt;String&gt; readLines( String snippetId )
+        throws IOException
+    {
+        BufferedReader reader;
+<span class="pc bpc" id="L142" title="2 of 4 branches missed.">        if ( encoding == null || &quot;&quot;.equals( encoding ) )</span>
+        {
+<span class="nc" id="L144">            reader = new BufferedReader( new InputStreamReader( source.openStream() ) );</span>
+        }
+        else
+        {
+<span class="fc" id="L148">            reader = new BufferedReader( new InputStreamReader( source.openStream(), encoding ) );</span>
+        }
+
+<span class="fc" id="L151">        List&lt;String&gt; lines = new ArrayList&lt;String&gt;();</span>
+        try
+        {
+<span class="fc" id="L154">            boolean capture = false;</span>
+            String line;
+<span class="fc bfc" id="L156" title="All 2 branches covered.">            while ( ( line = reader.readLine() ) != null )</span>
+            {
+<span class="pc bpc" id="L158" title="2 of 4 branches missed.">                if ( snippetId == null || &quot;&quot;.equals( snippetId.trim() ) )</span>
+                {
+<span class="nc" id="L160">                    lines.add( line );</span>
+                }
+                else
+                {
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                    if ( isStart( snippetId, line ) )</span>
+                    {
+<span class="fc" id="L166">                        capture = true;</span>
+                    }
+<span class="fc bfc" id="L168" title="All 2 branches covered.">                    else if ( isEnd( snippetId, line ) )</span>
+                    {
+<span class="fc" id="L170">                        break;</span>
+                    }
+<span class="fc bfc" id="L172" title="All 2 branches covered.">                    else if ( capture )</span>
+                    {
+<span class="fc" id="L174">                        lines.add( line );</span>
+                    }
+                }
+            }
+        }
+        finally
+        {
+<span class="pc" id="L181">            IOUtil.close( reader );</span>
+<span class="fc" id="L182">        }</span>
+<span class="fc" id="L183">        return lines;</span>
+    }
+
+    /**
+     * Determines if the given line is a start demarcator.
+     *
+     * @param snippetId the id of the snippet.
+     * @param line the line.
+     * @return True, if the line is a start demarcator.
+     */
+    protected boolean isStart( String snippetId, String line )
+    {
+<span class="fc" id="L195">        return isDemarcator( snippetId, &quot;START&quot;, line );</span>
+    }
+
+    /**
+     * Determines if the given line is a demarcator.
+     *
+     * @param snippetId the id of the snippet.
+     * @param what Identifier for the demarcator.
+     * @param line the line.
+     * @return True, if the line is a start demarcator.
+     */
+    protected boolean isDemarcator( String snippetId, String what, String line )
+    {
+<span class="fc" id="L208">        String upper = line.toUpperCase( Locale.ENGLISH );</span>
+<span class="pc bpc" id="L209" title="1 of 6 branches missed.">        return upper.contains( what.toUpperCase( Locale.ENGLISH ) )</span>
+            &amp;&amp; upper.contains( &quot;SNIPPET&quot; )
+            &amp;&amp; line.contains( snippetId );
+    }
+
+    /**
+     * Determines if the given line is an end demarcator.
+     *
+     * @param snippetId the id of the snippet.
+     * @param line the line.
+     * @return True, if the line is an end demarcator.
+     */
+    protected boolean isEnd( String snippetId, String line )
+    {
+<span class="fc" id="L223">        return isDemarcator( snippetId, &quot;END&quot;, line );</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.4.201312101107</span></div></body></html>
