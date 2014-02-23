@@ -54,7 +54,7 @@ repository configuration is required.
 <plugin>
     <groupId>org.vromero</groupId>
     <artifactId>gist-maven-plugin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <configuration>
         <username>MyUserName</username>
         <password>myp4ssw0rd!</password>
